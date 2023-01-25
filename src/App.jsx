@@ -1,9 +1,9 @@
+import { api_URL } from "../env"
 
 function App() {
-
   return (
-    <div>
-      <h1>DEMO DEMO</h1>
+    <div className="demo">
+      <h1>DEMO { api_URL }</h1>
     </div>
   )
 }
