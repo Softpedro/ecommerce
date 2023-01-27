@@ -5,7 +5,7 @@ import { API_URL } from "../../constants/env";
 import { setToken } from "../../helpers/auth";
 import LoginTemplate from "../templates/LoginTemplate";
 
-function Login() {
+function Register() {
   const nav = useNavigate();
   const [error, setError] = useState();
 
@@ -15,20 +15,32 @@ function Login() {
     const data = {
       email: e.target.email.value,
       password: e.target.password.value,
+      detail: {
+        fullname: e.target.fullname.value
+      }
     };
     axios
-      .post(`${API_URL}/public/login`, data)
+      .post(`${API_URL}/public/users`, data)
       .then((resp) => {
         setToken(resp.data.data.token)
-        nav("/")
+        nav("/login")
       })
       .catch((err) => {
         setError(err)
       });
   };
   return (
-    <LoginTemplate title="Iniciar Sesion">
+    <LoginTemplate title="Registrate">
       <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Nombre"
+            name="fullname"
+            required
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
         <div className="mb-4">
           <input
             type="email"
@@ -65,4 +77,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;

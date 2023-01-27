@@ -1,6 +1,6 @@
 import LogoApp from "/src/assets/images/ecommerce_favicon.jpg";
 
-function LoginTemplate({ children }) {
+function LoginTemplate({ children, title }) {
   return (
     <section className="h-full gradient-form bg-gray-200 md:h-screen">
       <div className="container m-auto py-12 px-6 h-full flex align-center justify-center">
@@ -16,7 +16,7 @@ function LoginTemplate({ children }) {
                         alt=""
                         width="80"
                         className="mx-auto w-48 mb-4 pt-4" />
-                      <h4 className="text-xl font-semibold mt-1 mb-8 pb-1">Iniciar Sesion</h4>
+                      <h4 className="text-xl font-semibold mt-1 mb-8 pb-1">{ title }</h4>
                     </div>
                     { children }
                   </div>
