@@ -6,11 +6,11 @@ import { deletToken, token } from "../../../helpers/auth";
 const MainMenu = () => {
   const nav = useNavigate();
   const { userData, setUserData } = useContext(UserContext)
-
+  console.log(userData)
   const handleSession = () => {
     deletToken();
     nav("/");
-    setUserData(null)
+    setUserData()
   }
   return (
     <nav className="w-full">
@@ -54,7 +54,6 @@ const MainMenu = () => {
           )
         }
       </ul>
-      {JSON.stringify(userData.is_admin)}
     </nav>
   );
 }

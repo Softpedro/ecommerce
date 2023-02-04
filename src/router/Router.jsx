@@ -8,6 +8,7 @@ import Register from "../components/pages/Register";
 import Form from "../components/pages/admin/products/Form";
 import Table from "../components/pages/admin/products/Table";
 import Admin from "../components/templates/Admin";
+import Product from "../components/pages/Product";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: "/productos",
         element: <Products />,
+      },
+      {
+        path: "/productos/:id",
+        element: <Product />,
       },
     ],
   },
