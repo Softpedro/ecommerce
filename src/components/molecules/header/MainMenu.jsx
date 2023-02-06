@@ -25,6 +25,12 @@ const MainMenu = () => {
             Productos
           </Link>
         </li>
+
+        <li className="flex items-center">
+          <Link className="menu-item" to="/carrito">
+            Carrito
+          </Link>
+        </li>
         {
           !token() ? (
             <li className="flex items-center">

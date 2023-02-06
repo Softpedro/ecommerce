@@ -6,8 +6,8 @@ import { CartContext } from "../../context/CartContext"
 
 const Product = () => {
 
+  const {state, dispatch} = useContext(CartContext)
   const params = useParams()
-  const {dispatch} = useContext(CartContext)
   const [product, setProduct] = useState()
 
   useEffect(() => {
@@ -38,14 +38,17 @@ const Product = () => {
       <p>
         {JSON.stringify(product)}
       </p>
-      <button
-        className="bg-gradient"
-        onClick={addToCart}
-      >Agregar al carrito</button>
-      <button
-        className="bg-gradient"
-        onClick={removeFormCart}
-      >Quitar al carrito</button>
+      {!state.cart.find((c) => c.id === product?.id) ? (
+        <button
+          className="bg-gradient"
+          onClick={addToCart}
+        >Agregar al carrito</button>
+      ) : (
+        <button
+          className="bg-gradient"
+          onClick={removeFormCart}
+        >Quitar al carrito</button>
+      )}
     </div>
   )
 }
