@@ -8,7 +8,7 @@ const CartProvider = ({ children }) => {
     cart: []
   }
   const [state, dispatch] = useReducer(CartReducer, initialState)
-  console.log(initialState)
+  // console.log(initialState)
   return (
     <CartContext.Provider value={{ state, dispatch }}>
       {children}

@@ -1,54 +1,83 @@
-import axios from "axios"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useState } from "react"
 import { useParams } from "react-router-dom"
-import { API_URL } from "../../constants/env"
 import { CartContext } from "../../context/CartContext"
+import useFetch from "../../hooks/useFetch"
+import Loader from "../atoms/Loader"
+import ProductDetails from "../molecules/ProductDetails"
+import PriceDetails from "../molecules/PriceDetails"
+import ProductRating from "../atoms/ProductRating"
+import Badge from "../atoms/Badge"
+import BuyButton from "../atoms/BuyButton"
+import ProductInformation from "../molecules/ProductInformation"
+import ShareProduct from "../molecules/ShareProduct"
 
 const Product = () => {
 
   const {state, dispatch} = useContext(CartContext)
   const params = useParams()
   const [product, setProduct] = useState()
+  const { data, loading, error } = useFetch(`public/products/${params.id}`)
 
-  useEffect(() => {
-    axios
-      .get(`${ API_URL }/public/products/${params.id}`)
-      .then((resp) => {
-        setProduct(resp.data.data)
-      })
-  }, [])
+  if (loading) return <Loader />
+  if (error) return <div>{error?.message}</div>
 
-  const addToCart = () => {
-    dispatch({
-      type: "ADD_TO_CART",
-      payload: product,
-    })
-  }
-
-  const removeFormCart = () => {
-    dispatch({
-      type: "REMOVE_FROM_CART",
-      payload: product
-    })
-  }
+  const { rating, sold, isNew, hasDelivery } = data.features.stats
 
   return (
-    <div>
-      <h1 className="text-3xl">Producto: {product?.product_name}</h1>
-      <p>
-        {JSON.stringify(product)}
-      </p>
-      {!state.cart.find((c) => c.id === product?.id) ? (
-        <button
-          className="bg-gradient"
-          onClick={addToCart}
-        >Agregar al carrito</button>
-      ) : (
-        <button
-          className="bg-gradient"
-          onClick={removeFormCart}
-        >Quitar al carrito</button>
-      )}
+    <div className="container m-auto px-4">
+      <section className="py-10">
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <div className="rounded-lg overflow-hidden mb-5">
+              <img
+                className="align-middle"
+                src={data.images[0]}
+                alt={data.product_name}
+              />
+            </div>
+            <ProductDetails details={data.features.details} isNew={isNew} />
+          </div>
+          <div>
+            <span className="block text-gray-500 text-sm mb-2">
+              {isNew ? "Nuevo" : "Usado"} | {sold} Vendidos
+            </span>
+            <h1 className="text-xl lg:text-2xl font-semibold leading-7 lg:leading-6 text-gray-800 mb-4">
+              {data.product_name}
+            </h1>
+            <div className="flex items-center gap-2 mb-4">
+              <ProductRating rating={rating} />
+              {sold > 300 && <Badge text="Lo mas vendido" />}
+              {isNew && <Badge text="Nuevo" color="bg-purple-500" />}
+            </div>
+            <PriceDetails price={data.price} />
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <BuyButton text="Comprar ahora" />
+              {!state.cart.find((p) => p.id === data.id) ? (
+                <BuyButton
+                  text="Agregar al carrito"
+                  onClick={() => {
+                    dispatch({ type: "ADD_TO_CART", payload: data})
+                  }}
+                  isGhost
+                />
+              ) : (
+                <BuyButton
+                  text="Quitar del carrito"
+                  onClick={() => {
+                    dispatch({ type: "REMOVE_FROM_CART", payload: data })
+                  }}
+                  isGhost
+                />
+              )}
+            </div>
+            <ProductInformation
+              description={data.description}
+              deliveryAvailable={hasDelivery}
+            />
+            <ShareProduct id={data.id} />
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

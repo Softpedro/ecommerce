@@ -6,7 +6,7 @@ import { deletToken, token } from "../../../helpers/auth";
 const MainMenu = () => {
   const nav = useNavigate();
   const { userData, setUserData } = useContext(UserContext)
-  console.log(userData)
+  // console.log(userData)
   const handleSession = () => {
     deletToken();
     nav("/");

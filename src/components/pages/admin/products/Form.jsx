@@ -6,13 +6,14 @@ import { token } from "../../../../helpers/auth";
 import Loader from "../../../atoms/Loader";
 
 const Form = () => {
-  const nav = useNavigate();
-  const params = useParams();
-  let prm = params.id
+  const nav = useNavigate()
+  const params = useParams()
 
-  const [product, setProduct] = useState();
-  // const [error, setError] = useState();
+  const [hasDelivery, setHasDelivery] = useState(false)
+  const [isNew, setIsNew] = useState(false)
+  const [product, setProduct] = useState()
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState()
   useEffect(() => {
     if(params?.id !== undefined){
       setLoading(true)
@@ -36,10 +37,22 @@ const Form = () => {
     const body = {
       product_name: e.target.productName.value,
       price: Number(e.target.price.value),
-      images: [e.target.image.value],
+      images: [e.target.image1.value],
       description: e.target.description.value,
       features: {
-        color: e.target.color.value,
+        details: {
+          color: e.target.color.value,
+          brand: e.target.brand.value,
+          model: e.target.model.value,
+          year: e.target.year.value,
+          category: e.target.category.value,
+        },
+        stats: {
+          rating: Number(e.target.rating.value),
+          sold: Number(e.target.sold.value),
+          isNew,
+          hasDelivery,
+        },
       }
     }
     if (!params.id) {
@@ -71,68 +84,181 @@ const Form = () => {
     <div className="max-w-200 m-auto mt-10 px-4">
       <h1 className="text-3xl font-medium leading-6 text-gray-900">
         {`${params.id ? "Editar" : "Crear"}`} Producto
-        </h1>
-      <form onSubmit={ handleSubmit }>
-        <div className="col-span-6 sm:col-span-3 mt-4">
-          <label htmlFor="product_name" className="block text-sm font-medium text-gray-700">Nombre</label>
-          <input
-            type="text"
-            name="productName"
-            required
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            defaultValue={product?.product_name}
-            id="product_name" />
+      </h1>
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-2 gap-6 mb-6">
+          <div>
+            <label htmlFor="productName">Nombre del producto</label>
+            <input
+              type="text"
+              name="productName"
+              defaultValue={product && product.product_name}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="price">Precio</label>
+            <input
+              type="number"
+              name="price"
+              required
+              defaultValue={product && product.price}
+            />
+          </div>
+          <div>
+            <label htmlFor="price">Vendidos</label>
+            <input
+              type="number"
+              name="sold"
+              step="1"
+              required
+              defaultValue={product && product.features.stats.sold}
+            />
+          </div>
+          <div>
+            <label htmlFor="image1">Imagen 1</label>
+            <input
+              type="text"
+              name="image1"
+              required
+              defaultValue={product && product.images[0]}
+            />
+          </div>
+          <div>
+            <label htmlFor="color">Marca</label>
+            <input
+              type="text"
+              name="brand"
+              required
+              defaultValue={product && product.features.details.brand}
+            />
+          </div>
+          <div>
+            <label htmlFor="color">Modelo</label>
+            <input
+              type="text"
+              name="model"
+              required
+              defaultValue={product && product.features.details.model}
+            />
+          </div>
+          <div>
+            <label htmlFor="color">Color</label>
+            <input
+              type="text"
+              name="color"
+              required
+              defaultValue={product && product.features.details.color}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="color">Año</label>
+              <input
+                type="text"
+                name="year"
+                required
+                defaultValue={product && product.features.details.year}
+              />
+            </div>
+            <div>
+              <p htmlFor="delivery">Rating</p>
+              <input
+                type="number"
+                name="rating"
+                required
+                defaultValue={product && product.features.stats.rating}
+                min="1"
+                max="5"
+                step="1"
+              />
+            </div>
+          </div>
+          <div>
+            <label htmlFor="description">Description</label>
+            <textarea
+              type="text"
+              name="description"
+              required
+              defaultValue={product && product.description}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="category">Categoría</label>
+            <select
+              name="category"
+              className="outline-none h-9 rounded"
+              defaultValue={
+                product ? product.features.details.category : "Otros"
+              }
+            >
+              <option value="Otros" disabled>
+                Selecciona una categoría
+              </option>
+              <option value="Tecnología">Tecnología</option>
+              <option value="Hogar">Hogar</option>
+              <option value="Deportes">Deportes</option>
+              <option value="Moda">Moda</option>
+              <option value="Juguetes">Juguetes</option>
+            </select>
+          </div>
+          <div className="flex gap-10">
+            <div>
+              <p className="mb-2">Envio a domicilio</p>
+              <div className="flex gap-2">
+                <label className="flex items-center gap-1">
+                  <span>Si</span>
+                  <input
+                    type="radio"
+                    name="delivery"
+                    className="mt-1"
+                    onChange={() => setHasDelivery(true)}
+                    checked={hasDelivery}
+                  />
+                </label>
+                <label className="flex items-center gap-1">
+                  <span>No</span>
+                  <input
+                    type="radio"
+                    name="no-delivery"
+                    className="mt-1"
+                    onChange={() => setHasDelivery(false)}
+                    checked={!hasDelivery}
+                  />
+                </label>
+              </div>
+            </div>
+            <div>
+              <p className="mb-2">Nuevo</p>
+              <div className="flex gap-2">
+                <label className="flex items-center gap-1">
+                  <span>Si</span>
+                  <input
+                    type="radio"
+                    name="new"
+                    className="mt-1"
+                    onChange={() => setIsNew(true)}
+                    checked={isNew}
+                  />
+                </label>
+                <label className="flex items-center gap-1">
+                  <span>No</span>
+                  <input
+                    type="radio"
+                    name="old"
+                    className="mt-1"
+                    onChange={() => setIsNew(false)}
+                    checked={!isNew}
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <div className="col-span-6 sm:col-span-3 mt-4">
-          <label htmlFor="lbl_price" className="block text-sm font-medium text-gray-700">Precio</label>
-          <input
-            type="number"
-            name="price"
-            required
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            defaultValue={product?.price}
-            id="lbl_price" />
-        </div>
-
-        <div className="col-span-6 sm:col-span-3 mt-4">
-          <label htmlFor="lbl_image" className="block text-sm font-medium text-gray-700">Imagen</label>
-          <input
-            type="url"
-            name="image"
-            required
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            defaultValue={product?.images[0]}
-            id="lbl_image" />
-        </div>
-
-        <div className="col-span-6 sm:col-span-3 mt-4">
-          <label htmlFor="lbl_description" className="block text-sm font-medium text-gray-700">Descripcion</label>
-          <textarea
-            name="description"
-            rows="10"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            required
-            defaultValue={product?.description}
-            id="lbl_description"></textarea>
-        </div>
-        <div className="col-span-6 sm:col-span-3 mt-4">
-          <label htmlFor="lbl_color" className="block text-sm font-medium text-gray-700">Color</label>
-          <input
-            type="text"
-            name="color"
-            defaultValue={product?.features.color}
-            required
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="lbl_color"
-          />
-        </div>
-        <div className="col-span-6 sm:col-span-3 mt-10">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
-          >Guardar</button>
-        </div>
+        <button type="submit" className="bg-gradient">
+          Guardar
+        </button>
+        <p>{error && JSON.stringify(error)}</p>
       </form>
     </div>
   )
